@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">movie tv</string>
+    <!--to toggle the open close button
+       of the navigation drawer-->
+    <string name="menu_drawer_open">Drawer Open</string>
+    <string name="menu_drawer_close">Drawer Closed</string>
+</resources>
