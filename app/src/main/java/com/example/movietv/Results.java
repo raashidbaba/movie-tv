@@ -2,7 +2,7 @@ package com.example.movietv;
 
 import java.io.Serializable;
 
-public class Results implements Serializable {
+public class  Results implements Serializable {
 
     public String poster_path;
     public String original_language;

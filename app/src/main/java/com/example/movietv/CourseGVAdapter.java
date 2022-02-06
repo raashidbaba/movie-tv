@@ -31,9 +31,9 @@ public class CourseGVAdapter extends ArrayAdapter<Results> {
         }
 
         Results results = getItem(position);
-        ImageView courseIV = listitemView.findViewById(R.id.thum_img);
+        ImageView courseIV = listitemView.findViewById(R.id.thum_img);//im
         Picasso.with(getContext())
-                .load("http://image.tmdb.org/t/p/w780/" + results.poster_path)
+                .load("https://image.tmdb.org/t/p/w780/" + results.poster_path)
                 .into(courseIV);
         listitemView.setOnClickListener(new View.OnClickListener() {
             @Override

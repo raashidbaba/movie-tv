@@ -1,25 +1,18 @@
 package com.example.movietv;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
@@ -42,9 +35,14 @@ import java.util.List;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     TextView moviename, voteAverage, releaseDate, orginalLanguage, overView;
-    ImageView moviethumb;
+    ImageView moviethumb,trailerfirst;
+    RecyclerView thumbnail;
+    RecyclerView.LayoutManager RecyclerViewLayoutManager;
+    LinearLayoutManager HorizontalLayout;
     Results results;
     YouTubePlayerView youTubePlayerView;
+    String YOUTUBE_THUMBNAIL_URL = "http://img.youtube.com/vi/";
+    String YOUTUBE_IMAGE_EXT = "/0.jpg";
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -68,6 +66,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         releaseDate = findViewById(R.id.release_date);
         releaseDate.setText(results.release_date);
+
+        thumbnail = findViewById(R.id.recyclerview);
+        RecyclerViewLayoutManager
+                = new LinearLayoutManager(
+                getApplicationContext());
+
+        thumbnail.setLayoutManager(
+                RecyclerViewLayoutManager);
 
         orginalLanguage = findViewById(R.id.original_lang);
         orginalLanguage.setText(results.original_language);
@@ -104,7 +110,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 // Enter URL address where your json file resides
                 // Even you can make call to php file which returns json data
                 url = new URL("https://api.themoviedb.org/3/movie/" + results.id + "/videos?api_key=90787843a200cfbfd55b14b39270f6a1");
-
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -166,21 +171,37 @@ public class MovieDetailsActivity extends AppCompatActivity {
             //this method will be running on UI thread
             Log.d("", result);
             JSONObject json = null;
+
             try {
-                json = new JSONObject(result);
-                JSONObject finalJson = json;
+                json = new JSONObject(result);//results
+               JSONObject finalJson = json;
+               JSONArray jArray = finalJson.getJSONArray("results");
+                List<VideoResponse> vid = new ArrayList<>();
                 youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
                     @Override
                     public void onReady(@NonNull YouTubePlayer youTubePlayer) {
                         String videoId = null;
                         try {
-                            videoId = finalJson.getJSONArray("results").getJSONObject(0).getString("key");
+                            videoId = jArray.getJSONObject(0).getString("key");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         youTubePlayer.loadVideo(videoId, 0);
                     }
                 });
+                for(int i=0;i<jArray.length();i++) {
+                    JSONObject json_data = jArray.getJSONObject(i);
+                    VideoResponse RES = new VideoResponse();
+                    RES.key = json_data.getString("key");
+                    vid.add(RES);
+                }
+
+                HorizontalLayout = new LinearLayoutManager(MovieDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false);
+                thumbnail.setLayoutManager(HorizontalLayout);
+
+                VideoAdapter adapter = new VideoAdapter( vid,MovieDetailsActivity.this);
+                thumbnail.setAdapter(adapter);
+
             } catch (JSONException e) {
                 Log.d("Error", "I'm in exception");
 

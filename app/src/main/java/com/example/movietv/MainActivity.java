@@ -62,7 +62,7 @@ public class MainActivity extends DrawerBaseActivity {
 
                 // Enter URL address where your json file resides
                 // Even you can make call to php file which returns json data
-                url = new URL("http://api.themoviedb.org/3/movie/popular?api_key=90787843a200cfbfd55b14b39270f6a1");
+                url = new URL("https://api.themoviedb.org/3/movie/popular?api_key=90787843a200cfbfd55b14b39270f6a1");//url
 
             } catch (MalformedURLException e) {
                 // TODO Auto-generated catch block
@@ -72,9 +72,9 @@ public class MainActivity extends DrawerBaseActivity {
             try {
 
                 // Setup HttpURLConnection class to send and receive data from php and mysql
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.connect();
+                conn = (HttpURLConnection) url.openConnection(); //http connection
+                conn.setRequestMethod("GET"); //get method
+                conn.connect();///connection successful
                 // setDoOutput to true as we receive data from json file
                 //conn.setDoOutput(true);
 
@@ -86,7 +86,7 @@ public class MainActivity extends DrawerBaseActivity {
 
             try {
 
-                int response_code = conn.getResponseCode();
+                int response_code = conn.getResponseCode();//code 200
 
                 // Check if successful connection made
                 if (response_code == HttpURLConnection.HTTP_OK) {
@@ -126,13 +126,14 @@ public class MainActivity extends DrawerBaseActivity {
             Log.d("",result);
             JSONObject json = null;
             try {
-                json = new JSONObject(result);
+                json = new JSONObject(result);//
             } catch (JSONException e) {
                 Log.d("Error","I'm in exception");
 
                 e.printStackTrace();
             }
             pdLoading.dismiss();
+
             List<Results> data=new ArrayList<>();
 
             pdLoading.dismiss();
@@ -144,7 +145,7 @@ public class MainActivity extends DrawerBaseActivity {
                 for(int i=0;i<jArray.length();i++){
                     JSONObject json_data = jArray.getJSONObject(i);
                     //          Log.d("",json_data.toString());
-                    Results result1 = new Results();
+                    Results result1 = new Results();//model
                     result1.original_language= json_data.getString("original_language");
                     result1.original_title= json_data.getString("original_title");
                     result1.poster_path = json_data.getString("poster_path");
